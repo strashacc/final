@@ -6,6 +6,8 @@ const {User} = require('../model/user');
 const db = require('../database/db');
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 router.get('/login', (req, res) => {
     res.render('login');
@@ -14,12 +16,17 @@ router.post('/login', async (req, res) => {
     try {
         const creds = new User(req.body);
         const user = new User( await db.getUser(creds.Username) );
-        if (user && creds.Password != user.Password) {
-            res.render('login', {Message: 'Incorrect Username or Password!'});
+        if (!user) {
+            return res.render('login', {Message: 'Incorrect Username or Password!'});
         }
-        const token = jwt.sign({Username: user.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
-        res.cookie('cookie', token);
-        res.redirect('/posts');
+        bcrypt.compare(creds.Password, user.Password, (err, result) => {
+            if (result) {
+                return res.render('login', {Message: 'Incorrect Username or Password!'});
+            }
+            const token = jwt.sign({Username: user.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
+            res.cookie('cookie', token);
+            return res.redirect('/posts');
+        });
     } catch (error) {
         console.log(error);
         res.status(500);
@@ -44,13 +51,16 @@ router.post('/signup', async (req, res) => {
             console.log(Validation.Message);
             return res.render('signup', {Message: Validation.Message});
         }
-        if ( !db.addUser(newUser) ){
-            console.log('Error creating new user');
-            return res.status(500).redirect('error');
-        }
-        const token = jwt.sign({Username: newUser.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
-        res.cookie('cookie', token);
-        return res.redirect('/posts');
+        bcrypt.hash(newUser.Password, saltRounds, (err, hash) => {
+            newUser.Password = hash;
+            if ( !db.addUser(newUser) ){
+                console.log('Error creating new user');
+                return res.status(500).redirect('error');
+            }
+            const token = jwt.sign({Username: newUser.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
+            res.cookie('cookie', token);
+            return res.redirect('/posts');
+        });
     } catch (error) {
         console.log(error)
         res.status(500).send('error'); // Add Error page

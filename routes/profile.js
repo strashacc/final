@@ -1,10 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { User } = require('../model/user');
-const { Post } = require('../model/post');
 const db = require('../database/db');
 const { auth } = require('../scripts/auth');
-const { ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
 
 router.get('/', async (req, res) => {
     try {
@@ -67,13 +66,25 @@ router.post('/update', async (req, res) => {
         }
         update = {$set: {} }
         for (field in req.body) {
-            update.$set[field] = req.body[field];
+            if (req.body[field])
+                update.$set[field] = req.body[field];
         }
         console.log(update);
-        if ( ! await db.updateUser(authResult.Username, update) ) {
-            res.redirect('error');
+        if (req.body.Password) {
+            bcrypt.hash(req.body.Password, saltRounds, async (err, hash) => {
+                update.$set.Password = hash;
+                if ( ! await db.updateUser(authResult.Username, update) ) {
+                    return res.redirect('error');
+                }
+                return res.redirect('/profile');
+            });
         }
-        res.redirect('/profile');
+        else{
+            if ( ! await db.updateUser(authResult.Username, update) ) {
+                return res.redirect('error');
+            }
+            return res.redirect('/profile');
+        }
     } catch (error) {
         console.log(error);
     }
