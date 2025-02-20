@@ -14,7 +14,9 @@ router.get('/', async (req, res) => {
             res.redirect('/login');
         }
         const Profile = await db.getUser(authResult.Username);
-        res.render('profile', {Profile: Profile, isMyProfile: true});
+        const Posts = await db.getPosts(0, 100, {Author: Profile.Username} );
+        const Stats = await db.getPostStats(Profile.Username);
+        res.render('profile', {Profile: Profile, isMyProfile: true, Posts: Posts, Stats: Stats});
     } catch (error) {
         console.log(error);
     }
@@ -29,11 +31,12 @@ router.get('/user/:username', async (req, res) => {
         }
         const Profile = await db.getUser(req.params.username);
         const Posts = await db.getPosts(0, 100, {Author: Profile.Username} );
+        const Stats = await db.getPostStats(Profile.Username);
         if (Profile.Username == authResult.Username) {
-            res.render('profile', {Profile: Profile, isMyProfile: true, Posts: Posts});
+            res.render('profile', {Profile: Profile, isMyProfile: true, Posts: Posts, Stats: Stats});
         }
         else {
-            res.render('profile', {Profile: Profile, isMyProfile: false, Posts: Posts});
+            res.render('profile', {Profile: Profile, isMyProfile: false, Posts: Posts, Stats: Stats});
         }
     } catch (error) {
         console.log(error);

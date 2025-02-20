@@ -19,6 +19,7 @@ app.use(express.urlencoded({extended: false}));
 redirect(app);
 app.redirect('/login', '/auth/login');
 app.redirect('/signup', '/auth/signup');
+app.redirect('/', '/posts');
 
 app.use('/auth', auth);
 app.use('/posts', posts);

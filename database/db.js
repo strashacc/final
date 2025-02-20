@@ -187,4 +187,30 @@ async function searchPosts(query) {
     }
 }
 
-module.exports = {addUser, getUser, addPost, getPosts, getPost, updatePost, deletePost, updateUser, deleteUser, searchPosts};
+async function getPostStats(username) {
+    try {
+        await client.connect();
+
+        const db = client.db(DB);
+        const col = db.collection('posts');
+
+        const response = await col.aggregate([ 
+                               {$match: {Author: username} },
+                               {$group: {
+                                    _id: null, 
+                                    avg: {$avg: {$size: '$Likes' } },
+                                    max: {$max: {$size: '$Likes'} },
+                                    min: {$min: {$size: '$Likes'} },
+                                    total: {$sum: 1},
+                                    totalLikes: {$sum: {$size: '$Likes'} } 
+                                } } 
+                            ]).toArray();
+        return (response.at(0) ? response.at(0) : {avg: NaN, min: NaN, max: NaN, total: NaN, totalLikes: NaN});
+    } catch (error) {
+        
+    } finally {
+        await client.close();
+    }
+}
+
+module.exports = {addUser, getUser, addPost, getPosts, getPost, updatePost, deletePost, updateUser, deleteUser, searchPosts, getPostStats};

@@ -27,6 +27,14 @@
             <p>Bio: <%= Profile.Bio %></p>
         </section>
         <hr>
+        <section>
+            <h3>Posts: <%= Stats.total %></h3>
+            <h3>Average Likes: <%= Stats.avg %></h3>
+            <h3>Max Likes: <%= Stats.max %></h3>
+            <h3>Min Likes: <%= Stats.min %></h3>
+            <h3>Total Likes: <%= Stats.totalLikes %></h3>
+        </section>
+        <hr>
         <section id="posts">
             <% for (i = 0; i < Posts.length; ++i) { %>
                 <div class="post" onclick="location.assign('/posts/post/<%= Posts[i]._id %>')">
