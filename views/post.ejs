@@ -5,14 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= Post.Title %></title>
     <link rel="stylesheet" href="/css/post.css">
+    <style>
+        #likesBtn {
+            font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;
+        }
+        #likesBtn.liked {
+            color:lightgreen;
+        }
+    </style>
 </head>
 <body>
-    <h1><%= Post.Title %></h1>
-    <% if (User.Username == Post.Author) { %>
-        <a href="/posts/update/<%= Post._id %>" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Edit</a>
-    <% } %>
-    <h3>Description: </h3><p><%= Post.Description %></p>
-    <br><br>
-    <p><%= Post.Content.Text %></p>
+    <nav>
+        <!-- Navigation Goes Here -->
+    </nav>
+    <main>
+        <section>
+            <h1><%= Post.Title %></h1>
+            <% if (User.Username == Post.Author) { %>
+                <a href="/posts/update/<%= Post._id %>" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Edit</a>
+            <% } %>
+            <h3>Description: </h3><p><%= Post.Description %></p>
+            <br>
+            <p id="likesBtn" <% if (Liked) { %> class="liked" <% } %>>Likes: <%= Post.Likes.length %></p>
+            <p id="commentsBtn" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Comments: <%= Post.Comments.length %></p>
+            <br>
+            <p><%= Post.Content.Text %></p>
+        </section>
+        <section id="comments">
+            <h2>Comments</h2>
+            <form action="/posts/post/<%= Post._id %>/comment" method="post">
+
+            </form>
+            <% for ( Comment in Post.Comments ) { %>
+                <h3><%= Comment.Author %></h3>
+                <p style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Created: <%= Comment.Created %></p>
+                <p><%= Comment.Text %></p>
+            <% } %>
+        </section>
+    </main>
+    <script src="/js/post.js"></script>
 </body>
 </html>

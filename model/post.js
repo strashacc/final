@@ -16,6 +16,14 @@ class Post {
             this.Created = Post.Created;
         if (Post.Updated)
             this.Updated = Post.Updated;
+        if (Post.Likes)
+            this.Likes = Post.Likes;
+        else
+            this.Likes = [];
+        if (Post.Comments)
+            this.Comments = Post.Comments;
+        else
+            this.Comments = [];
         
         for (let item in Post) {
             if (item.startsWith('Content')) {
