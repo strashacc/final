@@ -159,4 +159,18 @@ router.post('/create', async (req, res) => {
     }
 });
 
+router.get('/search', async (req, res) => {
+    try {
+        const query = req.query.search;
+        var posts = undefined;
+        if (query) {
+            posts = await db.searchPosts(query);
+        }
+        console.log(posts);
+        res.render('searchPosts', {Posts: posts});
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 module.exports = router;

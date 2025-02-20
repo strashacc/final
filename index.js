@@ -6,12 +6,19 @@ const auth = require('./routes/auth');
 const posts = require('./routes/posts');
 const profile = require('./routes/profile');
 const cookieparser = require('cookie-parser');
+const redirect = require('express-redirect');
 const PORT = process.env.PORT;
 
 app.use(cookieparser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'static')));
 app.use(express.urlencoded({extended: false}));
+
+
+
+redirect(app);
+app.redirect('/login', '/auth/login');
+app.redirect('/signup', '/auth/signup');
 
 app.use('/auth', auth);
 app.use('/posts', posts);

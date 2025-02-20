@@ -50,6 +50,42 @@ async function getUser (Username) {
     }
 }
 
+async function updateUser(Username, update) {
+    try {
+        await client.connect();
+
+        const db = client.db(DB);
+        const col = db.collection('users');
+
+        const response = await col.updateOne({Username: Username}, update);
+
+        return response.acknowledged;
+    } catch (error) {
+
+    } finally {
+        await client.close();
+    }
+}
+
+async function deleteUser(Username) {
+    try {
+        await client.connect();
+
+        const db = client.db(DB);
+        const userCol = db.collection('users');
+        const postCol = db.collection('posts');
+
+        const res1 = await postCol.deleteMany({Author: Username});
+        const res2 = await userCol.deleteOne({Username: Username});
+
+        return (res1.acknowledged && res2.acknowledged);
+    } catch (error) {
+
+    } finally {
+        await client.close();
+    }
+}
+
 async function addPost(Post) {
     try {
         await client.connect();
@@ -135,4 +171,21 @@ async function deletePost(_id) {
     }
 }
 
-module.exports = {addUser, getUser, addPost, getPosts, getPost, updatePost, deletePost};
+async function searchPosts(query) {
+    try {
+        await client.connect();
+
+        const db = client.db(DB);
+        const col = db.collection('posts');
+
+        const response = await col.find({$text: {$search: query} }).toArray();
+
+        return response;
+    } catch (error) {
+
+    } finally {
+        await client.close();
+    }
+}
+
+module.exports = {addUser, getUser, addPost, getPosts, getPost, updatePost, deletePost, updateUser, deleteUser, searchPosts};

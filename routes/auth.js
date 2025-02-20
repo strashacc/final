@@ -44,17 +44,17 @@ router.post('/signup', async (req, res) => {
         }
         else {
             console.log(Validation.Message);
-            res.render('signup', {Message: Validation.Message});
+            return res.render('signup', {Message: Validation.Message});
         }
         if ( !db.addUser(newUser) ){
             console.log('Error creating new user');
-            res.status(500).redirect('error');
+            return res.status(500).redirect('error');
         }
         key = fs.readFileSync('key.priv').toString();
         console.log(key);
         const token = jwt.sign({Username: newUser.Username}, key, {algorithm: 'RS512'});
         res.cookie('cookie', token);
-        res.redirect('/posts');
+        return res.redirect('/posts');
     } catch (error) {
         console.log(error)
         res.status(500).send('error'); // Add Error page

@@ -20,9 +20,13 @@
             <h1>Name: <%= Profile.Name %></h1>
             <h2>Email: <%= Profile.Email %></h2>
             <% if (isMyProfile) { %>
-                <a href="/profile/update/" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Edit Profile</a>
+                <a href="/profile/update" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Edit Profile</a>
+                <a href="/profile/logout" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Logout</a>
+
             <% } %>
+            <p>Bio: <%= Profile.Bio %></p>
         </section>
+        <hr>
         <section id="posts">
 
         </section>

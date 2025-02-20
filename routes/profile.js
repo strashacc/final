@@ -61,6 +61,15 @@ router.post('/update', async (req, res) => {
             res.clearCookie('cookie');
             res.redirect('/login');
         }
+        update = {$set: {} }
+        for (field in req.body) {
+            update.$set[field] = req.body[field];
+        }
+        console.log(update);
+        if ( ! await db.updateUser(authResult.Username, update) ) {
+            res.redirect('error');
+        }
+        res.redirect('/profile');
     } catch (error) {
         console.log(error);
     }
@@ -73,6 +82,25 @@ router.post('/delete', async (req, res) => {
             res.clearCookie('cookie');
             res.redirect('/login');
         }
+        if (! await db.deleteUser(authResult.Username) ) {
+            res.redirect('error');
+        }
+        res.clearCookie('cookie');
+        res.redirect('/login');
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+router.get('/logout', async (req, res) => {
+    try {
+        const authResult = auth(req);
+        if ( !authResult ) {
+            res.clearCookie('cookie');
+            res.redirect('/login');
+        }
+        res.clearCookie('cookie');
+        res.redirect('/login');
     } catch (error) {
         console.log(error);
     }

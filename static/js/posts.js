@@ -8,7 +8,7 @@ async function getPosts() {
     const posts = await fetch(`/posts/getPosts?skip=${index}`, {method: 'GET'}).then(async (res) => {return (await res.text())});
     if (posts)
         index += 20;
-    const postsSection = document.getElementById('posts');
+    var postsSection = document.getElementById('posts');
     if (!postsSection)
         postsSection = document.body;
     postsSection.innerHTML = postsSection.innerHTML + posts;

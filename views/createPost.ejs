@@ -12,8 +12,9 @@
     <main>
         <section>
             <form action="/posts/create" method="post">
-                <input type="text" name="Title" id="Title">
-                <textarea name="Content.Text" id="Content.Text"></textarea>
+                <input type="text" name="Title" id="Title" placeholder="Post Title" required><br>
+                <textarea name="Description" id="Description" placeholder="Short Description" required></textarea><br>
+                <textarea name="Content.Text" id="Content.Text" placeholder="Main Body"></textarea><br>
                 <button type="submit">Submit</button>
             </form>
         </section>
