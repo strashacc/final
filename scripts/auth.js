@@ -1,10 +1,10 @@
-const fs = require('fs');
+require('dotenv').config();
+const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const jwt = require('jsonwebtoken');
 
 function validateToken(token) {
     try{
-        const pubKey = fs.readFileSync('key.pub').toString();
-        const decrypted = jwt.verify(token, pubKey);
+        const decrypted = jwt.verify(token, PUBLIC_KEY);
         return decrypted.valueOf();
     } catch (error) {
         console.log(error);

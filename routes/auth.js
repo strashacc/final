@@ -1,10 +1,10 @@
+require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const validator = require('validator');
 const {User} = require('../model/user');
 const db = require('../database/db');
-const fs = require('fs');
-const {validateToken} = require('../scripts/auth');
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const jwt = require('jsonwebtoken');
 
 router.get('/login', (req, res) => {
@@ -17,9 +17,7 @@ router.post('/login', async (req, res) => {
         if (user && creds.Password != user.Password) {
             res.render('login', {Message: 'Incorrect Username or Password!'});
         }
-        key = fs.readFileSync('key.priv').toString();
-        console.log(key);
-        const token = jwt.sign({Username: user.Username}, key, {algorithm: 'RS512'});
+        const token = jwt.sign({Username: user.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
         res.cookie('cookie', token);
         res.redirect('/posts');
     } catch (error) {
@@ -50,9 +48,7 @@ router.post('/signup', async (req, res) => {
             console.log('Error creating new user');
             return res.status(500).redirect('error');
         }
-        key = fs.readFileSync('key.priv').toString();
-        console.log(key);
-        const token = jwt.sign({Username: newUser.Username}, key, {algorithm: 'RS512'});
+        const token = jwt.sign({Username: newUser.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
         res.cookie('cookie', token);
         return res.redirect('/posts');
     } catch (error) {
