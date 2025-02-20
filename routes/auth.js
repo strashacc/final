@@ -51,9 +51,9 @@ router.post('/signup', async (req, res) => {
             console.log(Validation.Message);
             return res.render('signup', {Message: Validation.Message});
         }
-        bcrypt.hash(newUser.Password, saltRounds, (err, hash) => {
+        bcrypt.hash(newUser.Password, saltRounds, async (err, hash) => {
             newUser.Password = hash;
-            if ( !db.addUser(newUser) ){
+            if ( !await db.addUser(newUser) ){
                 console.log('Error creating new user');
                 return res.status(500).redirect('error');
             }
