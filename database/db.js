@@ -146,7 +146,6 @@ async function updatePost(_id, update) {
         const col = db.collection('posts');        
 
         const response = await col.updateOne({_id: _id}, update);
-        console.log(response);
         return response.acknowledged;
     } catch (error) {
         console.log(error);

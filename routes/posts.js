@@ -38,10 +38,10 @@ router.get('/post/:id', async (req, res) => {
             return res.redirect('/login');
         }
         const user = new User(await db.getUser(authResult.Username));
-        console.log(user.Username)
         const _id = new ObjectId(req.params.id);
         const post = new Post(await db.getPost(_id));
         var Liked = false;
+        console.log(post)
         if (post.Likes.indexOf(authResult.Username) != -1)
             Liked = true;
         res.render('post', {User: user, Post: post, Liked: Liked});
@@ -201,6 +201,28 @@ router.get('/post/:id/like', async (req, res) => {
     } catch (error) {
         console.log(error);
         res.send('Error');
+    }
+});
+router.post('/post/:id/comment', async (req, res) => {
+    try {
+        const authResult = auth(req);
+        if ( !authResult ) {
+            res.clearCookie('cookie');
+            return res.redirect('/login');
+        }
+        const id = new ObjectId(req.params.id);
+        const Comment = {
+            Author: authResult.Username,
+            Created: Date.now(),
+            Text: req.body.Text
+        }
+        const update = {$addToSet: {Comments: Comment} };
+        if (! await db.updatePost(id, update)) {
+            return res.render('error');
+        }
+        res.redirect(`/posts/post/${req.params.id}`);
+    } catch (error) {
+        console.log(error);
     }
 });
 
