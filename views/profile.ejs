@@ -28,10 +28,18 @@
         </section>
         <hr>
         <section id="posts">
-
+            <% for (i = 0; i < Posts.length; ++i) { %>
+                <div class="post" onclick="location.assign('/posts/post/<%= Posts[i]._id %>')">
+                    <h2 style="margin-bottom: 0px;"><%= Posts[i].Title %></h2>
+                    <a href="/profile/user/<%= Posts[i].Author %>" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">@<%= Posts[i].Author %></a>
+                    <h5 style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Created: <%= new Date(Posts[i].Created) %></h5>
+                    <% if (Posts[i].Updated) { %>
+                        <h5 style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Updated: <%= new Date(Posts[i].Updated) %></h5>
+                    <% } %>
+                    <p><%= Posts[i].Description %></p>
+                </div>
+            <% } %>
         </section>
     </main>
-
-    <script src="/js/posts.js"></script>
 </body>
 </html>

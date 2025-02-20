@@ -28,11 +28,12 @@ router.get('/user/:username', async (req, res) => {
             res.redirect('/login');
         }
         const Profile = await db.getUser(req.params.username);
+        const Posts = await db.getPosts(0, 100, {Author: Profile.Username} );
         if (Profile.Username == authResult.Username) {
-            res.render('profile', {Profile: Profile, isMyProfile: true});
+            res.render('profile', {Profile: Profile, isMyProfile: true, Posts: Posts});
         }
         else {
-            res.render('profile', {Profile: Profile, isMyProfile: false});
+            res.render('profile', {Profile: Profile, isMyProfile: false, Posts: Posts});
         }
     } catch (error) {
         console.log(error);

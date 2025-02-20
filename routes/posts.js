@@ -41,7 +41,6 @@ router.get('/post/:id', async (req, res) => {
         const _id = new ObjectId(req.params.id);
         const post = new Post(await db.getPost(_id));
         var Liked = false;
-        console.log(post)
         if (post.Likes.indexOf(authResult.Username) != -1)
             Liked = true;
         res.render('post', {User: user, Post: post, Liked: Liked});

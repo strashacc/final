@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= Post.Title %></title>
-    <link rel="stylesheet" href="/css/post.css">
     <style>
         #likesBtn {
             font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;
@@ -41,9 +40,9 @@
             <% for (let i = 0; i < Post.Comments.length; ++i ) { %>
                 <% var Comment = Post.Comments[i]; %>
                 <div>
-                    <a href="/profile/user/<%= Comment.Author %>"><h3 style="margin-bottom: 10px;">@<%= Comment.Author %></h3></a>
-                    <p style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Created: <%= Comment.Created %></p>
-                    <p><%= Comment.Text %></p>
+                    <a href="/profile/user/<%= Comment.Author %>"><h3 style="margin-bottom: 5px;">@<%= Comment.Author %></h3></a>
+                    <p style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Created: <%= new Date(Comment.Created) %></p>
+                    <p style="margin-top: 5px;"><%= Comment.Text %></p>
                 </div>
             <% } %>
         </section>

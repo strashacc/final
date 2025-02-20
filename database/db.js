@@ -104,14 +104,14 @@ async function addPost(Post) {
     }
 }
 
-async function getPosts(skip, limit) {
+async function getPosts(skip, limit, query) {
     try {
         await client.connect();
 
         const db = client.db(DB);
         const col = db.collection('posts');
 
-        const response = await col.find().skip(skip).limit(limit).toArray();
+        const response = await col.find(query).skip(skip).limit(limit).toArray();
 
         return response;
     } catch (error) {
