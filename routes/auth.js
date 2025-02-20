@@ -20,7 +20,7 @@ router.post('/login', async (req, res) => {
             return res.render('login', {Message: 'Incorrect Username or Password!'});
         }
         bcrypt.compare(creds.Password, user.Password, (err, result) => {
-            if (result) {
+            if (!result) {
                 return res.render('login', {Message: 'Incorrect Username or Password!'});
             }
             const token = jwt.sign({Username: user.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
