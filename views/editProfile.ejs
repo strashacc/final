@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile</title>
+</head>
+<body>
+    <nav>
+        <!-- Navigation goes here -->
+    </nav>
+    <main>
+        <section>
+            <form action="/profile/update" method="POST">
+                <input type="text" name="Name" id="Name" value="<%= Profile.Name %>" required><br>
+                <input type="email" name="Email" id="Email" value="<%= Profile.Email %>" required><br>
+                <textarea name="Bio" id="Bio"><%= Profile.Bio %></textarea><br>
+                <input type="password" name="Password" id="Password" required><br>
+                <button type="submit">Save Changes</button><button type="button" id="deleteBtn">Delete Account</button>
+            </form>
+        </section>
+    </main>
+    <div id="deleteDialog" hidden>
+        <form action="/profile/delete" method="post">
+            <h3>Are you sure you want to <b>delete</b> your account?</h3>
+            <button type="submit">Yes</button> <button onclick="document.getElementById('deleteDialog').toggleAttribute('hidden')" type="button">No</button>
+        </form>
+    </div>
+
+    <script src="/js/edit.js"></script>
+</body>
+</html>

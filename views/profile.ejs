@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <% if (isMyProfile) { %>
+            My Profile
+        <% } else { %>
+            Profile.Name
+        <% } %>
+    </title>
+</head>
+<body>
+    <nav>
+        <!-- Some navigation elements -->
+    </nav>
+    <main>
+        <section id="user_info">
+            <h1>Name: <%= Profile.Name %></h1>
+            <h2>Email: <%= Profile.Email %></h2>
+            <% if (isMyProfile) { %>
+                <a href="/profile/update/" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Edit Profile</a>
+            <% } %>
+        </section>
+        <section id="posts">
+
+        </section>
+    </main>
+
+    <script src="/js/posts.js"></script>
+</body>
+</html>

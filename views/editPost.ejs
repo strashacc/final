@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit: <%= Post.Title %></title>
+    <link rel="stylesheet" href="/css/post.css">
+</head>
+<body>
+    <nav>
+        <!-- Some navigation elements -->
+    </nav>
+    <main>
+        <section>
+            <form action="/posts/update/<%= Post._id %>" method="POST">
+                <input type="text" name="Title" id="Title" value="<%= Post.Title %>">
+                <h3>Description: </h3><textarea name="Description" id="Description"><%= Post.Description %></textarea><br><br>
+                <textarea name="Content.Text" id="Content.Text"><%= Post.Content.Text %></textarea> <br>
+                <button type="submit">Save Changes</button> <button type="button" id="deleteBtn">Delete Post</button>
+            </form>
+        </section>
+    </main>
+    <div hidden id="deleteDialog">
+        <form action="/posts/delete/<%= Post._id %>" method="post">
+            <h3>Are you sure you want to delete this post?</h3>
+            <button type="submit">Yes</button> <button onclick="document.getElementById('deleteDialog').toggleAttribute('hidden')" type="button">No</button>
+        </form>
+    </div>
+
+    <script src="/js/edit.js"></script>
+</body>
+</html>

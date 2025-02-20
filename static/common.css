@@ -1,0 +1,19 @@
+body{
+    width: 100vw;
+    min-height: 100vh;
+}
+section {
+    justify-items: center;
+}
+.auth_form {
+    max-width: fit-content;
+    padding: 20px;
+    border: 2px darkgrey solid;
+    border-radius: 10px;
+    h1, h2, h3, h4, h5 {
+        text-align: center;
+    }
+    * {
+        margin-top: 10px;
+    }
+}
