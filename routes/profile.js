@@ -7,7 +7,7 @@ const saltRounds = 10;
 
 router.get('/', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             res.redirect('/login');
@@ -23,7 +23,7 @@ router.get('/', async (req, res) => {
 
 router.get('/user/:username', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             res.redirect('/login');
@@ -44,7 +44,7 @@ router.get('/user/:username', async (req, res) => {
 
 router.get('/update/', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             res.redirect('/login');
@@ -59,7 +59,7 @@ router.get('/update/', async (req, res) => {
 
 router.post('/update', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             res.redirect('/login');
@@ -92,7 +92,7 @@ router.post('/update', async (req, res) => {
 
 router.post('/delete', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             res.redirect('/login');
@@ -109,7 +109,7 @@ router.post('/delete', async (req, res) => {
 
 router.get('/logout', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             res.redirect('/login');

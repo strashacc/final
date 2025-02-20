@@ -8,7 +8,7 @@ const { ObjectId } = require('mongodb');
 
 router.get('/', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.status(401).clearCookie('cookie');
             return res.redirect('/login');
@@ -32,7 +32,7 @@ router.get('/getPosts', async (req, res) => {
 });
 router.get('/post/:id', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -50,7 +50,7 @@ router.get('/post/:id', async (req, res) => {
 });
 router.get('/update/:id', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -69,7 +69,7 @@ router.get('/update/:id', async (req, res) => {
 });
 router.post('/update/:id', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -95,7 +95,7 @@ router.post('/update/:id', async (req, res) => {
 });
 router.post('/delete/:id', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -116,7 +116,7 @@ router.post('/delete/:id', async (req, res) => {
 });
 router.get('/create', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -129,7 +129,7 @@ router.get('/create', async (req, res) => {
 });
 router.post('/create', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -160,7 +160,7 @@ router.post('/create', async (req, res) => {
 
 router.get('/search', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -179,7 +179,7 @@ router.get('/search', async (req, res) => {
 
 router.get('/post/:id/like', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');
@@ -204,7 +204,7 @@ router.get('/post/:id/like', async (req, res) => {
 });
 router.post('/post/:id/comment', async (req, res) => {
     try {
-        const authResult = auth(req);
+        const authResult = await auth(req);
         if ( !authResult ) {
             res.clearCookie('cookie');
             return res.redirect('/login');

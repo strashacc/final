@@ -1,6 +1,7 @@
 require('dotenv').config();
 const PUBLIC_KEY = process.env.PUBLIC_KEY;
 const jwt = require('jsonwebtoken');
+const db = require('../database/db');
 
 function validateToken(token) {
     try{
@@ -11,13 +12,14 @@ function validateToken(token) {
         return false;
     }
 }
-function auth(req) {
+async function auth(req) {
     const token = req.cookies['cookie'];
     if (!token) {
         return false;
     }
     const validation = validateToken(token);
-    if( !validation ) {
+    const user = await db.getUser(validation.Username);
+    if( !validation || !user) {
         return false;
     }
     return validation;
