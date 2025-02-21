@@ -15,7 +15,7 @@ router.get('/login', (req, res) => {
 router.post('/login', async (req, res) => {
     try {
         const creds = new User(req.body);
-        const user = new User( await db.getUser(creds.Username) );
+        const user = await db.getUser(creds.Username);
         if (!user) {
             return res.render('login', {Message: 'Incorrect Username or Password!'});
         }
