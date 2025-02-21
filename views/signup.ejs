@@ -17,6 +17,10 @@
                 <input type="password" name="Password" id="Password" placeholder="Password"><br>
                 <button type="submit">Sign Up</button>
             </form>
+            <a href="/auth/login" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Log In</a>
+            <% if (Message) { %>
+                <h3 style="color:red;"><%= Message %></h3>
+            <% } %>
         </section>
     </main>
 </body>

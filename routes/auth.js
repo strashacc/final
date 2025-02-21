@@ -34,7 +34,7 @@ router.post('/login', async (req, res) => {
 });
 
 router.get('/signup', (req, res) => {
-    res.render('signup');
+    res.render('signup', {Message: null});
 });
 router.post('/signup', async (req, res) => {
     const newValidator = new usernameValidator( 

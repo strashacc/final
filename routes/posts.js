@@ -144,7 +144,7 @@ router.post('/create', async (req, res) => {
             }
         }
         newPost.Author = authResult.Username;
-        newPost.Created = Date.now();
+        newPost.Created = new Date(Date.now());
         
         console.log(newPost);
 
