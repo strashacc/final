@@ -12,58 +12,71 @@ const saltRounds = 10;
 router.get('/login', (req, res) => {
     res.render('login');
 });
-router.post('/login', async (req, res) => {
+
+router.post('/login', async (req, res, next) => {
     try {
         const creds = new User(req.body);
+        if (!creds.Username || !creds.Password) {
+            return res.status(400).render('login', {
+                Message: 'Username and password are required'
+            });
+        }
+
         const user = await db.getUser(creds.Username);
         if (!user) {
-            return res.render('login', {Message: 'Incorrect Username or Password!'});
+            return res.status(401).render('login', {
+                Message: 'Incorrect Username or Password!'
+            });
         }
-        bcrypt.compare(creds.Password, user.Password, (err, result) => {
-            if (!result) {
-                return res.render('login', {Message: 'Incorrect Username or Password!'});
-            }
-            const token = jwt.sign({Username: user.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
-            res.cookie('cookie', token);
-            return res.redirect('/posts');
-        });
+
+        const match = await bcrypt.compare(creds.Password, user.Password);
+        if (!match) {
+            return res.status(401).render('login', {
+                Message: 'Incorrect Username or Password!'
+            });
+        }
+
+        const token = jwt.sign({ Username: user.Username }, PRIVATE_KEY, { algorithm: 'RS512' });
+        res.cookie('cookie', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+        return res.redirect('/posts');
     } catch (error) {
-        console.log(error);
-        res.status(500);
+        next(error);
     }
 });
 
 router.get('/signup', (req, res) => {
     res.render('signup', {Message: null});
 });
-router.post('/signup', async (req, res) => {
-    const newValidator = new usernameValidator( 
-                         new passwordValidator() );
+
+router.post('/signup', async (req, res, next) => {
     try {
         const newUser = new User(req.body);
-        console.log(newUser);
-        // Validation
-        const Validation = await newValidator.validate(newUser);
-        if (Validation.Status == 'OK') {
-            console.log('success');
+        
+        if (!newUser.Username || !newUser.Password || !newUser.Name || !newUser.Email) {
+            return res.status(400).render('signup', {
+                Message: 'All fields are required'
+            });
         }
-        else {
-            console.log(Validation.Message);
-            return res.render('signup', {Message: Validation.Message});
+
+        const validation = await newValidator.validate(newUser);
+        if (validation.Status !== 'OK') {
+            return res.status(400).render('signup', {
+                Message: validation.Message
+            });
         }
-        bcrypt.hash(newUser.Password, saltRounds, async (err, hash) => {
-            newUser.Password = hash;
-            if ( !await db.addUser(newUser) ){
-                console.log('Error creating new user');
-                return res.status(500).redirect('error');
-            }
-            const token = jwt.sign({Username: newUser.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
-            res.cookie('cookie', token);
-            return res.redirect('/posts');
-        });
+
+        newUser.Password = await bcrypt.hash(newUser.Password, saltRounds);
+        const result = await db.addUser(newUser);
+        
+        if (!result) {
+            throw new Error('Failed to create user');
+        }
+
+        const token = jwt.sign({ Username: newUser.Username }, PRIVATE_KEY, { algorithm: 'RS512' });
+        res.cookie('cookie', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+        return res.redirect('/posts');
     } catch (error) {
-        console.log(error)
-        res.status(500).send('error'); // Add Error page
+        next(error);
     }
 });
 

@@ -4,24 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sign Up</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/common.css">
+    <style>
+        body { background-color: #f8f9fa; height: 100vh; display: flex; align-items: center; }
+        .auth-container { max-width: 400px; margin: 0 auto; padding: 20px; }
+    </style>
 </head>
 <body>
-    <main>
-        <section>
+    <main class="container">
+        <section class="auth-container">
             <form action="/auth/signup" method="post" class="auth_form">
-                <h2>Sign Up</h2>
-                <input type="text" name="Username" id="Username" placeholder="Username"><br>
-                <input type="text" name="Name" id="Name" placeholder="Name"><br>
-                <input type="email" name="Email" id="Email" placeholder="Email"><br>
-                <input type="password" name="Password" id="Password" placeholder="Password"><br>
-                <button type="submit">Sign Up</button>
+                <h2 class="mb-4 text-center">Sign Up</h2>
+                <div class="mb-3">
+                    <label for="Username" class="form-label">Username</label>
+                    <input type="text" class="form-control" name="Username" id="Username" placeholder="Username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="Name" class="form-label">Name</label>
+                    <input type="text" class="form-control" name="Name" id="Name" placeholder="Name" required>
+                </div>
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="Email" id="Email" placeholder="Email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Password</label>
+                    <input type="password" class="form-control" name="Password" id="Password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+                <div class="text-center mt-3">
+                    <a href="/auth/login" class="text-muted small">Log In</a>
+                </div>
+                <% if (Message) { %>
+                    <div class="alert alert-danger mt-3"><%= Message %></div>
+                <% } %>
             </form>
-            <a href="/auth/login" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Log In</a>
-            <% if (Message) { %>
-                <h3 style="color:red;"><%= Message %></h3>
-            <% } %>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

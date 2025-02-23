@@ -4,34 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search Posts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; }
+    </style>
 </head>
 <body>
-    <nav>
-        <!-- Navigation goes here -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Blog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#">Profile</a></li>
+                </ul>
+            </div>
+        </div>
     </nav>
-    <main>
+    <main class="container mt-4">
         <section>
-            <form action="/posts/search" method="get">
-                <input type="search" name="search" id="search" placeholder="Search">
-                <button type="submit">Search</button>
+            <form action="/posts/search" method="get" class="mb-4">
+                <div class="input-group">
+                    <input type="search" class="form-control" name="search" id="search" placeholder="Search posts">
+                    <button type="submit" class="btn btn-primary">Search</button>
+                </div>
             </form>
-        </section>
-        <hr>
-        <section>
+            <hr>
             <% if (Posts) { %>
-                <% for (i = 0; i < Posts.length; ++i) { %>
-                    <div class="post" onclick="location.assign('/posts/post/<%= Posts[i]._id %>')">
-                        <h2 style="margin-bottom: 0px;"><%= Posts[i].Title %></h2>
-                        <a href="/profile/<%= Posts[i].Author %>" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">@<%= Posts[i].Author %></a>
-                        <h5 style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Created: <%= new Date(Posts[i].Created) %></h5>
-                        <% if (Posts[i].Updated) { %>
-                            <h5 style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Updated: <%= new Date(Posts[i].Updated) %></h5>
-                        <% } %>
-                        <p><%= Posts[i].Description %></p>
-                    </div>
-                <% } %>
+                <div class="row">
+                    <% for (i = 0; i < Posts.length; ++i) { %>
+                        <div class="col-md-4 mb-3">
+                            <div class="card" onclick="location.assign('/posts/post/<%= Posts[i]._id %>')">
+                                <div class="card-body">
+                                    <h2 class="card-title"><%= Posts[i].Title %></h2>
+                                    <a href="/profile/<%= Posts[i].Author %>" class="text-muted small">@<%= Posts[i].Author %></a>
+                                    <p class="small text-muted">Created: <%= new Date(Posts[i].Created) %></p>
+                                    <% if (Posts[i].Updated) { %>
+                                        <p class="small text-muted">Updated: <%= new Date(Posts[i].Updated) %></p>
+                                    <% } %>
+                                    <p class="card-text"><%= Posts[i].Description %></p>
+                                </div>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
             <% } %>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

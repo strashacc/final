@@ -6,20 +6,27 @@ const db = require('../database/db');
 const { auth } = require('../scripts/auth');
 const { ObjectId } = require('mongodb');
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const authResult = await auth(req);
-        if ( !authResult ) {
+        if (!authResult) {
             res.status(401).clearCookie('cookie');
             return res.redirect('/login');
         }
-        const Profile = await db.getUser(authResult.Username);
         
-        res.render('postsPage', {User: Profile});
+        const Profile = await db.getUser(authResult.Username);
+        const initialPosts = await db.getPosts(0, 20); 
+        
+        res.render('postsPage', {
+            User: Profile,
+            Posts: initialPosts,
+            shouldRefresh: req.query.refresh === 'true' 
+        });
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 });
+
 router.get('/getPosts', async (req, res) => {
     try {
         const skip = parseInt(req.query.skip);
@@ -127,18 +134,20 @@ router.get('/create', async (req, res) => {
         console.log(error);
     }
 });
-router.post('/create', async (req, res) => {
+
+
+router.post('/create', async (req, res, next) => {
     try {
         const authResult = await auth(req);
-        if ( !authResult ) {
+        if (!authResult) {
             res.clearCookie('cookie');
             return res.redirect('/login');
         }
+
         const newPost = new Post(req.body);
         newPost.Content = {};
         for (let item in req.body) {
             if (item.startsWith('Content')) {
-                console.log(item);
                 const key = item.substring(item.indexOf('.') + 1, item.length);
                 newPost.Content[key] = req.body[item];
             }
@@ -146,15 +155,19 @@ router.post('/create', async (req, res) => {
         newPost.Author = authResult.Username;
         newPost.Created = new Date(Date.now());
         
-        console.log(newPost);
-
-        if ( ! (await db.addPost(newPost)) ) {
-            return res.status(500).render('error', {Message: "We Had Some Trouble Saving Your Post"});
+        const result = await db.addPost(newPost);
+        if (!result) {
+            return res.status(500).render('error', { 
+                error: { 
+                    status: 500, 
+                    message: "We Had Some Trouble Saving Your Post" 
+                }
+            });
         }
-        return res.redirect('/posts');
+        
+        return res.redirect('/posts?refresh=true');
     } catch (error) {
-        console.log(error);
-        res.status(500);
+        next(error);
     }
 });
 
