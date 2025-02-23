@@ -16,7 +16,7 @@ Final is a full-featured web application built using MongoDB, Node.js, and Expre
 - 🚀 Node.js — JavaScript runtime environment
 - ⚡️ Express.js — web framework for building APIs
 - 🗄 MongoDB — NoSQL database
-- 📜 Mongoose — ODM for MongoDB
+- 📜 mongodb — Library for interacting with MongoDB
 - 🔑 JWT (JSON Web Token) — authentication
 - 🎨 Validator.js — validate incoming data
 - 🔐 bcrypt — password hashing
@@ -36,11 +36,13 @@ Final is a full-featured web application built using MongoDB, Node.js, and Expre
    
 3. Set up environment variables (`.env` file):
    
-
+   PORT=server_port
    MONGO_URI=your_mongodb_connection_string
-   JWT_SECRET=your_jwt_secret
+   DATABASE=database_name
+   PRIVATE_KEY=your_private_key
+   PUBLIC_KEY=your_public_key
    
-4. Start the server:
+5. Start the server:
    
 
    npm start
@@ -49,25 +51,24 @@ Final is a full-featured web application built using MongoDB, Node.js, and Expre
 ## 📡 API Endpoints
 
 ### 🔐 Authentication (Optional)
-- POST /api/auth/register — Register a new user
-- POST /api/auth/login — Log in
-- POST /api/auth/logout — Log out
+- POST /auth/signup — Register a new user
+- POST /auth/login — Log in
+- POST /profile/logout — Log out
 
 ### 👤 User Management
-- GET /api/users/:id — Retrieve user profile
-- GET /api/users/:id/posts — Get user posts
-- PUT /api/users/profile — Update user profile
+- GET /profile/user/:id — Retrieve user profile including posts
+- POST /profile/update — Update user profile
 
 ### 📝 Posts
-- GET /api/posts — Get all posts
-- GET /api/posts/:id — Get a specific post
-- POST /api/posts — Create a new post
-- PUT /api/posts/:id — Update a post
-- DELETE /api/posts/:id — Delete a post
+- GET /posts — Get all posts
+- GET /posts/post/:id — Get a specific post
+- POST /posts/create — Create a new post
+- POST /posts/update/:id — Update a post
+- POST /posts/delete/:id — Delete a post
 
 ### 👍 Likes and Comments
-- POST /api/posts/:id/like — Like/unlike a post
-- POST /api/posts/:id/comment — Add a comment
+- POST /posts/:id/like — Like/unlike a post
+- POST /posts/:id/comment — Add a comment
 
 ## 🔍 Search & Filtering
 - Full-text search using MongoDB text indexes
@@ -97,4 +98,4 @@ Final is a full-featured web application built using MongoDB, Node.js, and Expre
 - TTL index: Automatically remove old data (e.g., expired tasks)
 
 ## 🚀 Deployment
-The project is deployed on platforms such as Render, Replit, or Railway. Ensure .env files store sensitive information like database connection strings and JWT secrets.
+The project can be deployed on platforms such as Render, Replit, or Railway. Ensure store sensitive information like database connection strings and JWT secrets is stored in environment variables.
