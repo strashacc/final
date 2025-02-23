@@ -10,6 +10,8 @@ class User {
             this.Email = user.Email;
         if (user.Bio)
             this.Bio = user.Bio;
+        if (user.isAdmin)
+            this.isAdmin = user.isAdmin;
     }
 }
 

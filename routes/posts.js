@@ -3,17 +3,13 @@ const router = express.Router();
 const { User } = require('../model/user');
 const { Post } = require('../model/post');
 const db = require('../database/db');
-const { auth } = require('../scripts/auth');
+const { validateToken } = require('../scripts/auth');
 const { ObjectId } = require('mongodb');
 
 router.get('/', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.status(401).clearCookie('cookie');
-            return res.redirect('/login');
-        }
-        const Profile = await db.getUser(authResult.Username);
+        const identity = validateToken(req.cookies['cookie']);
+        const Profile = await db.getUser(identity.Username);
         
         res.render('postsPage', {User: Profile});
     } catch (error) {
@@ -32,16 +28,12 @@ router.get('/getPosts', async (req, res) => {
 });
 router.get('/post/:id', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
-        const user = new User(await db.getUser(authResult.Username));
+        const identity = validateToken(req.cookies['cookie']);
+        const user = new User(await db.getUser(identity.Username));
         const _id = new ObjectId(req.params.id);
         const post = new Post(await db.getPost(_id));
         var Liked = false;
-        if (post.Likes.indexOf(authResult.Username) != -1)
+        if (post.Likes.indexOf(identity.Username) != -1)
             Liked = true;
         res.render('post', {User: user, Post: post, Liked: Liked});
     } catch (error) {
@@ -50,15 +42,11 @@ router.get('/post/:id', async (req, res) => {
 });
 router.get('/update/:id', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
-        const user = new User(await db.getUser(authResult.Username));
+        const identity = validateToken(req.cookies['cookie']);
+        const user = new User(await db.getUser(identity.Username));
         const _id = new ObjectId(req.params.id);
         const post = await db.getPost(_id);
-        if (user.Username != post.Author) {
+        if (user.Username != post.Author && !user.isAdmin ) {
             res.status(403).render('error', {Message: 'You are not authorized to perform this action!'});
             return;
         }
@@ -69,15 +57,11 @@ router.get('/update/:id', async (req, res) => {
 });
 router.post('/update/:id', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
-        const user = new User(await db.getUser(authResult.Username));
+        const identity = validateToken(req.cookies['cookie']);
+        const user = new User(await db.getUser(identity.Username));
         const _id = new ObjectId(req.params.id);
         const post = await db.getPost(_id);
-        if (user.Username != post.Author) {
+        if (user.Username != post.Author && !user.isAdmin) {
             return res.status(403).render('error', {Message: 'You are not authorized to perform this action!'});
         }
         const updates = new Post(req.body);
@@ -95,15 +79,11 @@ router.post('/update/:id', async (req, res) => {
 });
 router.post('/delete/:id', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
-        const user = new User(await db.getUser(authResult.Username));
+        const identity = validateToken(req.cookies['cookie']);
+        const user = new User(await db.getUser(identity.Username));
         const _id = new ObjectId(req.params.id);
         const post = await db.getPost(_id);
-        if (user.Username != post.Author) {
+        if (user.Username != post.Author && !user.isAdmin) {
             return res.status(403).render('error', {Message: 'You are not authorized to perform this action!'});
         }
         if ( ! await db.deletePost(_id) ) {
@@ -116,12 +96,8 @@ router.post('/delete/:id', async (req, res) => {
 });
 router.get('/create', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
-        const Profile = await db.getUser(authResult.Username);
+        const identity = validateToken(req.cookies['cookie']);
+        const Profile = await db.getUser(identity.Username);
         return res.render('createPost', {User: Profile});
     } catch (error) {
         console.log(error);
@@ -129,21 +105,17 @@ router.get('/create', async (req, res) => {
 });
 router.post('/create', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
+        const identity = validateToken(req.cookies['cookie']);
         const newPost = new Post(req.body);
-        newPost.Content = {};
-        for (let item in req.body) {
-            if (item.startsWith('Content')) {
-                console.log(item);
-                const key = item.substring(item.indexOf('.') + 1, item.length);
-                newPost.Content[key] = req.body[item];
-            }
-        }
-        newPost.Author = authResult.Username;
+        // newPost.Content = {};
+        // for (let item in req.body) {
+        //     if (item.startsWith('Content')) {
+        //         console.log(item);
+        //         const key = item.substring(item.indexOf('.') + 1, item.length);
+        //         newPost.Content[key] = req.body[item];
+        //     }
+        // }
+        newPost.Author = identity.Username;
         newPost.Created = new Date(Date.now());
         
         console.log(newPost);
@@ -160,11 +132,7 @@ router.post('/create', async (req, res) => {
 
 router.get('/search', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
+        const identity = validateToken(req.cookies['cookie']);
         const query = req.query.search;
         var posts = undefined;
         if (query) {
@@ -179,17 +147,13 @@ router.get('/search', async (req, res) => {
 
 router.get('/post/:id/like', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
+        const identity = validateToken(req.cookies['cookie']);
         const id = new ObjectId(req.params.id);
-        const like = {$addToSet: {Likes: authResult.Username} };
-        const unlike = {$pull: {Likes: authResult.Username} };
+        const like = {$addToSet: {Likes: identity.Username} };
+        const unlike = {$pull: {Likes: identity.Username} };
         const post = new Post( await db.getPost(id) );
         var result;
-        if(post.Likes.indexOf(authResult.Username) != -1)
+        if(post.Likes.indexOf(identity.Username) != -1)
             result = await db.updatePost(id, unlike);
         else
             result = await db.updatePost(id, like);
@@ -204,14 +168,10 @@ router.get('/post/:id/like', async (req, res) => {
 });
 router.post('/post/:id/comment', async (req, res) => {
     try {
-        const authResult = await auth(req);
-        if ( !authResult ) {
-            res.clearCookie('cookie');
-            return res.redirect('/login');
-        }
+        const identity = validateToken(req.cookies['cookie']);
         const id = new ObjectId(req.params.id);
         const Comment = {
-            Author: authResult.Username,
+            Author: identity.Username,
             Created: Date.now(),
             Text: req.body.Text
         }

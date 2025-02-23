@@ -12,17 +12,22 @@ function validateToken(token) {
         return false;
     }
 }
-async function auth(req) {
+async function auth(req, res, next) {
     const token = req.cookies['cookie'];
-    if (!token) {
-        return false;
+    if (!token && !req.path.startsWith('/auth') && req.path != '/posts/getPosts') {
+        res.clearCookie('cookie');
+        return res.redirect('/auth/login');
+    }
+    else if (req.path.startsWith('/auth') || req.path != '/posts/getPosts') {
+        return next();
     }
     const validation = validateToken(token);
     const user = await db.getUser(validation.Username);
     if( !validation || !user) {
-        return false;
+        res.clearCookie('cookie');
+        return res.redirect('/auth/login');
     }
-    return validation;
+    return next();
 }
 
 module.exports = {validateToken, auth};
