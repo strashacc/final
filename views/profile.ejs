@@ -4,50 +4,218 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <% if (isMyProfile) { %>
-            My Profile
-        <% } else { %>
-            Profile.Name
-        <% } %>
+        <% if (isMyProfile) { %>My Profile<% } else { %>Profile: <%= Profile.Name %><% } %>
     </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --accent-color: #28a745;
+            --background-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-muted: #6c757d;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-container {
+            max-width: 1000px; /* Slightly wider for better layout */
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-header h2 {
+            color: var(--text-muted);
+            font-size: 1.25rem;
+            font-weight: 400;
+        }
+
+        .profile-actions a {
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .profile-actions a:hover {
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+        }
+
+        .bio {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background-color: #f1f3f5;
+            border-radius: 8px;
+        }
+
+        .stats-section {
+            background-color: #e9ecef;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .stats-section h3 {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .posts-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+
+        .text-muted {
+            color: var(--text-muted) !important;
+            font-size: 0.9rem;
+        }
+
+        .small {
+            font-size: 0.875rem;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .profile-container {
+                margin: 1rem;
+                padding: 1rem;
+            }
+
+            .profile-header h1 {
+                font-size: 2rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+            }
+
+            .stats-section {
+                padding: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <!-- Some navigation elements -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">Blog</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="/posts">Posts</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="/profile">Profile</a></li>
+                </ul>
+            </div>
+        </div>
     </nav>
-    <main>
-        <section id="user_info">
-            <h1>Name: <%= Profile.Name %></h1>
-            <h2>Email: <%= Profile.Email %></h2>
-            <% if (isMyProfile) { %>
-                <a href="/profile/update" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Edit Profile</a>
-                <a href="/profile/logout" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Logout</a>
-
-            <% } %>
-            <p>Bio: <%= Profile.Bio %></p>
-        </section>
-        <hr>
-        <section>
-            <h3>Posts: <%= Stats.total %></h3>
-            <h3>Average Likes: <%= Stats.avg %></h3>
-            <h3>Max Likes: <%= Stats.max %></h3>
-            <h3>Min Likes: <%= Stats.min %></h3>
-            <h3>Total Likes: <%= Stats.totalLikes %></h3>
-        </section>
-        <hr>
-        <section id="posts">
-            <% for (i = 0; i < Posts.length; ++i) { %>
-                <div class="post" onclick="location.assign('/posts/post/<%= Posts[i]._id %>')">
-                    <h2 style="margin-bottom: 0px;"><%= Posts[i].Title %></h2>
-                    <a href="/profile/user/<%= Posts[i].Author %>" style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">@<%= Posts[i].Author %></a>
-                    <h5 style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Created: <%= new Date(Posts[i].Created) %></h5>
-                    <% if (Posts[i].Updated) { %>
-                        <h5 style="font-size: small; font-weight: lighter; color: darkgrey; margin: 0px;">Updated: <%= new Date(Posts[i].Updated) %></h5>
-                    <% } %>
-                    <p><%= Posts[i].Description %></p>
+    <main class="container mt-4">
+        <section class="profile-container">
+            <div class="profile-header">
+                <h1><%= Profile.Name %></h1>
+                <h2><%= Profile.Email %></h2>
+                <% if (isMyProfile) { %>
+                    <div class="profile-actions mt-3">
+                        <a href="/profile/update" class="btn btn-outline-primary me-2">Edit Profile</a>
+                        <a href="/profile/logout" class="btn btn-outline-danger">Logout</a>
+                    </div>
+                <% } %>
+            </div>
+            <p class="bio"><%= Profile.Bio || 'No bio provided.' %></p>
+            <div class="stats-section">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>Posts: <%= Stats.total %></h3>
+                        <h3>Total Likes: <%= Stats.totalLikes %></h3>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Average Likes: <%= Stats.avg.toFixed(2) %></h3>
+                        <h3>Max Likes: <%= Stats.max %></h3>
+                        <h3>Min Likes: <%= Stats.min %></h3>
+                    </div>
                 </div>
-            <% } %>
+            </div>
+            <hr>
+            <div class="posts-section">
+                <h3>My Posts</h3>
+                <div class="row">
+                    <% if (Posts && Posts.length > 0) { %>
+                        <% Posts.forEach(post => { %>
+                            <div class="col-md-4 mb-3">
+                                <div class="card" onclick="location.assign('/posts/post/<%= post._id %>')">
+                                    <div class="card-body">
+                                        <h2 class="card-title"><%= post.Title %></h2>
+                                        <a href="/profile/user/<%= post.Author %>" class="text-muted small">@<%= post.Author %></a>
+                                        <p class="small text-muted">Created: <%= new Date(post.Created).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                                        <% if (post.Updated) { %>
+                                            <p class="small text-muted">Updated: <%= new Date(post.Updated).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' }) %></p>
+                                        <% } %>
+                                        <p class="card-text"><%= post.Description %></p>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } else { %>
+                        <p class="text-muted">No posts yet.</p>
+                    <% } %>
+                </div>
+            </div>
         </section>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

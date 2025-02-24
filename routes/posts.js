@@ -6,16 +6,22 @@ const db = require('../database/db');
 const { validateToken } = require('../scripts/auth');
 const { ObjectId } = require('mongodb');
 
-router.get('/', async (req, res) => {
+router.get('/', async (req, res, next) => {
     try {
         const identity = validateToken(req.cookies['cookie']);
         const Profile = await db.getUser(identity.Username);
+        const initialPosts = await db.getPosts(0, 20); 
         
-        res.render('postsPage', {User: Profile});
+        res.render('postsPage', {
+            User: Profile,
+            Posts: initialPosts,
+            shouldRefresh: req.query.refresh === 'true' 
+        });
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 });
+
 router.get('/getPosts', async (req, res) => {
     try {
         const skip = parseInt(req.query.skip);
@@ -103,7 +109,9 @@ router.get('/create', async (req, res) => {
         console.log(error);
     }
 });
-router.post('/create', async (req, res) => {
+
+
+router.post('/create', async (req, res, next) => {
     try {
         const identity = validateToken(req.cookies['cookie']);
         const newPost = new Post(req.body);
@@ -118,15 +126,19 @@ router.post('/create', async (req, res) => {
         newPost.Author = identity.Username;
         newPost.Created = new Date(Date.now());
         
-        console.log(newPost);
-
-        if ( ! (await db.addPost(newPost)) ) {
-            return res.status(500).render('error', {Message: "We Had Some Trouble Saving Your Post"});
+        const result = await db.addPost(newPost);
+        if (!result) {
+            return res.status(500).render('error', { 
+                error: { 
+                    status: 500, 
+                    message: "We Had Some Trouble Saving Your Post" 
+                }
+            });
         }
-        return res.redirect('/posts');
+        
+        return res.redirect('/posts?refresh=true');
     } catch (error) {
-        console.log(error);
-        res.status(500);
+        next(error);
     }
 });
 

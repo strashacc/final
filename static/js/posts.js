@@ -1,22 +1,25 @@
-var index = 0;
+let skip = document.getElementById('posts')?.children.length || 0;
 
 window.onload = () => {
-    getPosts();
+    const loadMoreBtn = document.getElementById('loadMore');
+    if (loadMoreBtn) {
+        loadMoreBtn.onclick = getPosts;
+    }
 }
 
 async function getPosts() {
-    const posts = await fetch(`/posts/getPosts?skip=${index}`, {method: 'GET'}).then(async (res) => {return (await res.text())});
-    if (posts)
-        index += 20;
-    var postsSection = document.getElementById('posts');
-    if (!postsSection)
-        postsSection = document.body;
-    postsSection.innerHTML = postsSection.innerHTML + posts;
-    const moreBtn = document.createElement('button');
-    moreBtn.textContent = 'More';
-    moreBtn.onclick = () => {
-        postsSection.removeChild(moreBtn);
-        getPosts();
-    };
-    postsSection.appendChild(moreBtn);
+    try {
+        const response = await fetch(`/posts/getPosts?skip=${skip}`);
+        const postsHtml = await response.text();
+        
+        if (postsHtml.trim().length > 0) {
+            const postsSection = document.getElementById('posts');
+            postsSection.innerHTML += postsHtml;
+            skip += 20;
+        } else {
+            document.getElementById('loadMore').style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error loading posts:', error);
+    }
 }
