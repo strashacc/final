@@ -48,35 +48,65 @@ router.get('/signup', (req, res) => {
     res.render('signup', {Message: null});
 });
 
-router.post('/signup', async (req, res, next) => {
+// router.post('/signup', async (req, res, next) => {
+//     try {
+//         const newUser = new User(req.body);
+        
+//         if (!newUser.Username || !newUser.Password || !newUser.Name || !newUser.Email) {
+//             return res.status(400).render('signup', {
+//                 Message: 'All fields are required'
+//             });
+//         }
+
+//         const validation = await newValidator.validate(newUser);
+//         if (validation.Status !== 'OK') {
+//             return res.status(400).render('signup', {
+//                 Message: validation.Message
+//             });
+//         }
+
+//         newUser.Password = await bcrypt.hash(newUser.Password, saltRounds);
+//         const result = await db.addUser(newUser);
+        
+//         if (!result) {
+//             throw new Error('Failed to create user');
+//         }
+
+//         const token = jwt.sign({ Username: newUser.Username }, PRIVATE_KEY, { algorithm: 'RS512' });
+//         res.cookie('cookie', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+//         return res.redirect('/posts');
+//     } catch (error) {
+//         next(error);
+//     }
+// });
+router.post('/signup', async (req, res) => {
+    const newValidator = new usernameValidator( 
+                         new passwordValidator() );
     try {
         const newUser = new User(req.body);
-        
-        if (!newUser.Username || !newUser.Password || !newUser.Name || !newUser.Email) {
-            return res.status(400).render('signup', {
-                Message: 'All fields are required'
-            });
+        console.log(newUser);
+        // Validation
+        const Validation = await newValidator.validate(newUser);
+        if (Validation.Status == 'OK') {
+            console.log('success');
         }
-
-        const validation = await newValidator.validate(newUser);
-        if (validation.Status !== 'OK') {
-            return res.status(400).render('signup', {
-                Message: validation.Message
-            });
+        else {
+            console.log(Validation.Message);
+            return res.render('signup', {Message: Validation.Message});
         }
-
-        newUser.Password = await bcrypt.hash(newUser.Password, saltRounds);
-        const result = await db.addUser(newUser);
-        
-        if (!result) {
-            throw new Error('Failed to create user');
-        }
-
-        const token = jwt.sign({ Username: newUser.Username }, PRIVATE_KEY, { algorithm: 'RS512' });
-        res.cookie('cookie', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-        return res.redirect('/posts');
+        bcrypt.hash(newUser.Password, saltRounds, async (err, hash) => {
+            newUser.Password = hash;
+            if ( !await db.addUser(newUser) ){
+                console.log('Error creating new user');
+                return res.status(500).redirect('error');
+            }
+            const token = jwt.sign({Username: newUser.Username}, PRIVATE_KEY, {algorithm: 'RS512'});
+            res.cookie('cookie', token);
+            return res.redirect('/posts');
+        });
     } catch (error) {
-        next(error);
+        console.log(error)
+        res.status(500).send('error'); // Add Error page
     }
 });
 
