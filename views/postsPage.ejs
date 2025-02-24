@@ -92,8 +92,6 @@
                 if (postsHtml.trim().length > 0) {
                     document.getElementById('posts').innerHTML += postsHtml;
                     skip += 20;
-                } else {
-                    document.getElementById('loadMore').style.display = 'none';
                 }
             } catch (error) {
                 console.error('Error loading posts:', error);
