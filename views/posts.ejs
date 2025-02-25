@@ -4,9 +4,9 @@
             <div class="card-body">
                 <h2 class="card-title"><%= Posts[i].Title %></h2>
                 <a href="/profile/user/<%= Posts[i].Author %>" class="text-muted small">@<%= Posts[i].Author %></a>
-                <p class="small text-muted">Created: <%= new Date(post.Created).toLocaleString() %></p>
+                <p class="small text-muted">Created: <%= new Date(Posts[i].Created).toLocaleString() %></p>
                 <% if (Posts[i].Updated) { %>
-                    <p class="small text-muted">Updated: <%= new Date(post.Updated).toLocaleString() %></p>
+                    <p class="small text-muted">Updated: <%= new Date(Posts[i].Updated).toLocaleString() %></p>
                 <% } %>
                 <p class="card-text"><%= Posts[i].Description %></p>
             </div>
